@@ -9,6 +9,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => res.send('Travel Cruise server is ready.!'))
+app.get('/', (req, res) => res.json(JSON.stringify('Travel Cruise server is ready.!')))
 
 app.listen(port, () => console.log(`http://localhost:${port}`));
