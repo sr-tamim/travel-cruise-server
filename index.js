@@ -27,6 +27,7 @@ async function run() {
         const placesCollection = placesDB.collection('places');
         const bookingsDB = client.db('bookingsDB');
         const bookingsCollection = bookingsDB.collection('bookings');
+        const subscriptionCollection = client.db('subscriptionsDB').collection('subscribers');
 
         // get all places
         app.get('/places', async (req, res) => {
@@ -97,6 +98,19 @@ async function run() {
             const filter = { placeID: { $in: placeIDs } };
             const result = await placesCollection.find(filter).toArray();
             res.json(result);
+        })
+
+        // add subscribers in database
+        app.post('/subscription', async (req, res) => {
+            const { subscriptionInfo } = req.body;
+            const result = await subscriptionCollection.insertOne(subscriptionInfo);
+            res.json(result);
+        })
+        // get all subscribers
+        app.get('/subscribers', async (req, res) => {
+            const cursor = subscriptionCollection.find({});
+            const subscribers = await cursor.toArray();
+            res.send(subscribers);
         })
 
     } finally { }
