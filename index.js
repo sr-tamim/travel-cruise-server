@@ -35,6 +35,9 @@ async function run() {
         // subscribers info database
         const subscriptionCollection = client.db('subscriptionsDB').collection('subscribers');
 
+        // users info collection
+        const usersCollection = client.db('usersCollection').collection('users');
+
 
         // get all tour places
         app.get('/places', async (req, res) => {
@@ -112,6 +115,28 @@ async function run() {
             const cursor = subscriptionCollection.find({});
             const subscribers = await cursor.toArray();
             res.send(subscribers);
+        })
+
+
+        // save user info in database
+        app.post('/users', async (req, res) => {
+            const newUser = req.body
+            const query = { email: newUser.email }
+            const filter = await usersCollection.findOne(query)
+            if (!filter || newUser.role === 'admin') {
+                const updateDoc = { $set: { ...newUser } }
+                const options = { upsert: true }
+                const result = await usersCollection.updateOne(query, updateDoc, options)
+                res.json(result)
+            } else {
+                res.json({ error: "User already added" })
+            }
+        })
+
+        app.post('/isAdmin', async (req, res) => {
+            const { email } = req.body
+            const filter = await usersCollection.findOne({ email })
+            res.send(filter.role === 'admin')
         })
 
     } finally {
