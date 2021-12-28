@@ -136,7 +136,7 @@ async function run() {
         app.post('/isAdmin', async (req, res) => {
             const { email } = req.body
             const filter = await usersCollection.findOne({ email })
-            res.send(filter.role === 'admin')
+            res.json(filter.role === 'admin')
         })
 
     } finally {
